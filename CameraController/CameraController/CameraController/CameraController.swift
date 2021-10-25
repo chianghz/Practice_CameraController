@@ -48,6 +48,7 @@ class CameraController: NSObject {
             }
     }
 
+    /// Setup Capture Session then start
     func setup() {
         self.setupAndStartCaptureSession()
     }
@@ -63,6 +64,10 @@ class CameraController: NSObject {
         }
         let settings = AVCapturePhotoSettings()
         self.photoOutput.capturePhoto(with: settings, delegate: self)
+    }
+
+    func stop() {
+        captureSession.stopRunning()
     }
 }
 
@@ -82,8 +87,8 @@ private extension CameraController {
             self.captureSession.beginConfiguration()
 
             // session specific configuration
-            if self.captureSession.canSetSessionPreset(.photo) {
-                self.captureSession.sessionPreset = .photo
+            if self.captureSession.canSetSessionPreset(.high) {
+                self.captureSession.sessionPreset = .high
             }
 
             // setup inputs
@@ -101,7 +106,9 @@ private extension CameraController {
             // commit configuration
             self.captureSession.commitConfiguration()
 
-            self.captureSession.startRunning()
+            DispatchQueue.main.async {
+                self.captureSession.startRunning()
+            }
         }
     }
 
@@ -176,8 +183,9 @@ private extension CameraController {
 
     func setupPreviewLayer(on view: UIView) {
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
-        previewLayer.frame = view.layer.frame
+        previewLayer.frame = view.layer.bounds
     }
 
     func switchCameraInput() {

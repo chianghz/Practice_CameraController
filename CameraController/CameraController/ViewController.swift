@@ -56,6 +56,12 @@ class ViewController: UIViewController {
             }
         }
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        cameraController.stop()
+    }
 }
 
 private extension ViewController {
